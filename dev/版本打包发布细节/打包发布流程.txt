@@ -1,0 +1,77 @@
+打包配置文件：位于项目工程Assets/VersionConfig/BuildVersionConfig.json
+
+{
+    "URL": "http://192.168.0.207:6688/files/游戏名/",	更新下载地址
+    "Version": "1.1.1",					更新版本号
+    "options": [					游戏打包配置，根据需要逐项添加；未配置的，会随App安装一同安装
+        {
+            "rootDir": "game_DdzMatch",			游戏文件夹名(这里为斗地主比赛场)
+			"useBasicVersion": false,	是否随基础版本更新（启动游戏时更新）
+			"isExtract": true,		是否随App发布，为true时，游戏安装后已经包含打包的版本；为false时需要更新下载
+            "dependList": [
+                "normal_ddz_common"			文件夹依赖其他文件夹，其中sproto/common/framework/commonprefab为公共依赖文件无需配置
+            ]
+        },
+        {
+            "rootDir": "game_DdzFree",			游戏文件夹名(这里为斗地主自由场)
+			"useBasicVersion": false,
+			"isExtract": true,
+            "dependList": [
+                "normal_ddz_common"
+            ]
+        }
+    ]
+}
+
+更新版本配置文件：位于打包配置文件中“URL”配置的地址+“/平台名/version_map.txt”
+ [
+        {
+            "ident": "basic",				基础模块：包含sproto/common/framework/commonprefab目录，过渡场景，大厅，资源字典的更新；
+            "url": "",					更新地址
+            "last": "1.1.2",				当前版本号，目前当前版本号需要和下面的各个游戏版本号配置相同；已经支持不同模块不同版本下载更新
+            "history": [				对一些版本需要做限制更新，比如 "1.2.2|1.1.1"：代表本地1.2.2版本需要到1.1.1版本
+                "1.2.2|1.1.1",
+                "1.2.4|1.3.2"
+            ]
+        },
+        {
+            "ident": "game_DdzMatch",			游戏模块：根据文件夹来命名
+            "url": "",
+            "last": "1.1.2",
+            "history": [				限制为空，更新到last指定的版本号
+            ]
+        },
+        {
+            "ident": "game_DdzFree",
+            "url": "",
+            "last": "1.1.2",
+            "history": [
+            ]
+        }
+    ]
+
+
+打包发布流程：
+
+1.检查打包配置文件: Assets/VersionConfig/BuildVersionConfig.json
+  注意：
+	1.游戏配置(isExtract 字段)是否需要随App发布
+	2.dependList依赖文件夹配置，如果不配置，更新的时候无法同步更新下来
+  更新版本号，xxx.xxx.xxx 大版本.版本.小版本 大版本号不匹配，需要重新下载App安装;版本和小版本根据需要自行控制
+
+2.执行依赖合法性检测，Packager/CheckDepends解决跨目录不合理引用
+  出现异常的依赖关系会打印到控制台，同时写入Assets/DependException.txt文件，逐一确认和解决里面的异常
+
+3.切换到需要发布的平台 Unity菜单项：File/BuildSetting
+
+4.执行资源打包Packager/BuildBundles 快捷键F9; 注意控制台输出，正常打包，会提示“BuildBundles Success!”，如果出现异常解决后重新打包
+注意：这里正式发布时，需要有内测服务器进行下载测试、更新测试、各个功能测试；都通过后，写版本清单文件
+
+5.登陆到远程公共目录，目前为\\192.168.0.207\files 进入包发布目录，要和 BuildVersionConfig.json 配置的URL匹配，将打出的包(Assets/StreamingAssets/目录下所有文件(.meta文件为Unity系统生成，可以忽略))上传到对应平台文件夹下对应本次版本号文件夹中
+  \\192.168.0.207\files\appname\platformname\version\
+
+6.修改版本控制文件version_map.txt中的版本信息，对于新加的游戏需要添加对应的段落
+注意：需要版本包同步到下载服务器完成后，更新版本信息文件
+
+7.制作App包，需要选择Unity菜单项：File/BuildSetting中执行
+注意：执行此项前，需要确认Assets/LuaFramework/Scripts/ConstDefine/AppConst.cs文件中 LuaBundleMode 和 CheckVersionMode 两项必须为true

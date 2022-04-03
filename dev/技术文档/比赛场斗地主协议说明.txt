@@ -1,0 +1,133 @@
+
+比赛顺序  1->2->3->1
+玩家位置代号：1,2,3
+农民代号：4
+地主代号：5
+全体玩家：0
+
+
+比赛场各阶段 game_stage:
+	wait_begin --报名结束，等待开始
+	wait_table  --等待分配桌子（匹配玩家）
+	ddz_game 	--正在斗地主
+	settlement  --结算
+	gameover --游戏结束
+
+斗地主状态表status:
+
+	wait_table:等待分配桌子 {}
+ --核心部分*********	
+	wait_p：等待人员入座 {seat_num,race,round}
+	#ready： 准备 {seat_num,}斗地主没有
+	fp： 发牌 {my_pai_list
+				remain_pai_amount
+				my_rate
+				round
+				race
+				seat_num
+				}
+	jdz： 叫地主{my_pai_list
+				remain_pai_amount
+				my_rate
+				round
+				race
+				seat_num
+				countdown
+				cur_p
+				act_list
+				}
+
+	set_dz： 设置地主{my_pai_list
+				remain_pai_amount
+				my_rate
+				round
+				race
+				seat_num
+				countdown
+				cur_p
+				act_list
+				dizhu
+				dz_pai
+				}
+	jiabei： 加倍{my_pai_list
+				remain_pai_amount
+				my_rate
+				round
+				race
+				seat_num
+				countdown
+				cur_p
+				act_list
+				dizhu
+				dz_pai
+				}
+	cp： 出牌
+	settlement： 结算{my_pai_list
+				remain_pai_amount
+				my_rate
+				round
+				race
+				seat_num
+				countdown
+				cur_p
+				act_list
+				dizhu
+				dz_pai
+				}
+				
+ --核心部分********	
+	report： 上报战果
+
+--]]
+
+
+--
+牌编号协议：
+	1-54 分别对应54张扑克牌		
+牌类型协议：
+	3-17 分别表示
+		3 4 5 6 7 8 9 10 J Q K A 2 小王 大王
+
+牌编号与牌类型映射表
+paiNo_to_paiType_map={
+			3,3,3,3,
+			4,4,4,4,
+			5,5,5,5,
+			6,6,6,6,
+			7,7,7,7,
+			8,8,8,8,
+			9,9,9,9,
+			10,10,10,10,
+			11,11,11,11,
+			12,12,12,12,
+			13,13,13,13,
+			14,14,14,14,
+			15,15,15,15,
+			16,
+			17,
+		}
+
+
+出牌类型协议：
+	0： 过
+	1： 单牌  
+	2： 对子  
+	3： 三不带
+	4： 三带一 	 --pai[1]代表三张部分 ，p[2]代表被带的牌
+	5： 三带一对   --pai[1]代表三张部分 ，p[2]代表被带的对子
+	6： 顺子  	 --pai[1]代表顺子起点牌，p[2]代表顺子终点牌
+	7： 连队		 --pai[1]代表连队起点牌，p[2]代表连队终点牌
+	8： 四带2    	 --pai[1]代表四张部分 ，p[2]p[3]代表被带的牌
+	9： 四带两对	 
+	10：飞机带单牌（只能全部带单牌） --pai[1]代表飞机起点牌，p[2]代表飞机终点牌，后面依次是要带的牌
+	11：飞机带对子（只能全部带对子）
+	12：飞机  不带 
+	13：炸弹
+	14：王炸
+	
+--]]
+
+
+
+
+

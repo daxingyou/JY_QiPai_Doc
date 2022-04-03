@@ -1,0 +1,10 @@
+
+4001 ~ 5000 ：服务器集群用端口
+    4001 ~ 4100 cluster 模式
+    4101 ~ 4300 master/slave 模式
+        4101 ~ 4200 master
+        4201 ~ 4300 slave
+5001 ~ 6000 ：对玩家的服务，比如 gate
+7001 ~ 8000 ：内部服务，比如：
+    debug console
+    mysql , redis

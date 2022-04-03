@@ -1,0 +1,5 @@
+1. Network.lua 地址
+2. versionconfig版本号
+3. ios build version
+4. ios capabilities
+5. 跳版本限制
